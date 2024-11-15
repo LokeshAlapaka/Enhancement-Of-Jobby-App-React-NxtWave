@@ -45,6 +45,29 @@ const salaryRangesList = [
   },
 ]
 
+const locationsList = [
+  {
+    label: 'Hyderabad',
+    locationId: 'HYDERABAD',
+  },
+  {
+    label: 'Bangalore',
+    locationId: 'BANGALORE',
+  },
+  {
+    label: 'Chennai',
+    locationId: 'CHENNAI',
+  },
+  {
+    label: 'Delhi',
+    locationId: 'DELHI',
+  },
+  {
+    label: 'Mumbai',
+    locationId: 'MUMBAI',
+  },
+]
+
 const jobsApiStatusConstant = {
   intial: 'INITIAL',
   inProgress: 'IN_PROGRESS',
@@ -68,6 +91,7 @@ class Jobs extends Component {
     activeCheckBoxList: [],
     activeSalaryRangeId: '',
     searchInput: '',
+    activeLocationList: [],
   }
 
   componentDidMount() {
@@ -203,6 +227,44 @@ class Jobs extends Component {
         return null
     }
   }
+
+  onClickLocation = event => {
+    const {activeLocationList} = this.state
+    if (activeLocationList.includes(event.target.id)) {
+      const updatedLocation = activeLocationList.filter(
+        each => each !== event.target.id,
+      )
+      this.setState({activeLocationList: updatedLocation}, this.getJobsData)
+    } else {
+      this.setState(
+        prevState => ({
+          activeLocationList: [
+            ...prevState.activeLocationList,
+            event.target.id,
+          ],
+        }),
+        this.getJobsData,
+      )
+    }
+  }
+
+  getLocationsView = () => (
+    <ul className="check-boxes-container">
+      {locationsList.map(eachItem => (
+        <li className="li-container" key={eachItem.locationId}>
+          <input
+            className="input-element"
+            id={eachItem.locationId}
+            type="checkbox"
+            onChange={this.onClickLocation}
+          />
+          <label className="label-element" htmlFor={eachItem.locationId}>
+            {eachItem.label}
+          </label>
+        </li>
+      ))}
+    </ul>
+  )
 
   onSelectSalaryRange = event => {
     this.setState({activeSalaryRangeId: event.target.id}, this.getJobsData)
@@ -365,6 +427,9 @@ class Jobs extends Component {
             <hr className="hr-line" />
             <h1 className="salary-details-heading">Salary Range</h1>
             {this.getRadioButtonsView()}
+            <hr className="hr-line" />
+            <h1 className="salary-details-heading">Location</h1>
+            {this.getLocationsView()}
           </div>
           <div className="jobs-lists-container">
             <div className="lg-search-container">
